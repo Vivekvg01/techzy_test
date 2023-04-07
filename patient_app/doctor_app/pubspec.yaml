@@ -1,0 +1,25 @@
+name: doctor_app
+version: 1.0.0+1
+publish_to: none
+description: A new Flutter project.
+environment:
+  sdk: ">=2.19.2 <3.0.0"
+
+dependencies:
+  awesome_notifications: ^0.6.21
+  cupertino_icons: ^1.0.2
+  firebase_core: ^2.9.0
+  firebase_messaging: ^14.2.1
+  flutter:
+    sdk: flutter
+  get: 4.6.5
+  http: ^0.13.5
+  zego_uikit_prebuilt_video_conference: ^2.1.4
+
+dev_dependencies:
+  flutter_lints: 2.0.1
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

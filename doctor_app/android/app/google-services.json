@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "302841576200",
+    "project_id": "videocallapp-b8a90",
+    "storage_bucket": "videocallapp-b8a90.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302841576200:android:8cd27f0d21d33f65aa4abd",
+        "android_client_info": {
+          "package_name": "doctorapp.com.doctor_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "302841576200-l0mfu0qhdha8v0lrdmi1g7vq9j6beeav.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-2ukM8px8EaW8HFKvHSumrEbJUnY9qZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "302841576200-l0mfu0qhdha8v0lrdmi1g7vq9j6beeav.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "302841576200-ftp8m7akfrdtrjndcji6t20ee79lmr37.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "doctorapp.com.doctorApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
