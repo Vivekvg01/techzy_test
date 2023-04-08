@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,9 +15,34 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     listenNotification();
+    getToken();
     conferenceID = 'conferenceId';
     userId = Random().nextInt(1000).toString();
     super.onInit();
+  }
+
+  String? token = '';
+
+  void getToken() async {
+    token = await FirebaseMessaging.instance.getToken();
+    saveToken(token!);
+  }
+
+  void saveToken(String token) async {
+    await FirebaseFirestore.instance
+        .collection('Usertoken')
+        .doc('Patient')
+        .set({
+      'token': token,
+    });
+    print(token);
+  }
+
+  void onAcceptCall() {
+    Get.to(
+      () => const VideoCallView(),
+      arguments: [conferenceID, userId],
+    );
   }
 
   void listenNotification() {
@@ -53,14 +79,16 @@ class HomeController extends GetxController {
           ],
         );
         AwesomeNotifications().actionStream.listen(
-          (event) {
+          (event) async {
             if (event.buttonKeyPressed == "REJECT") {
-              sendPushNotifications();
+              DocumentSnapshot snap = await FirebaseFirestore.instance
+                  .collection('Usertoken')
+                  .doc('Doctor')
+                  .get();
+              String? doctorToken = snap['token'];
+              sendPushNotifications(doctorToken!);
             } else if (event.buttonKeyPressed == "ACCEPT") {
-              Get.to(
-                VideoCallView(),
-                arguments: [conferenceID, userId],
-              );
+              onAcceptCall();
             } else {
               print('Clicked notification');
             }
@@ -70,7 +98,7 @@ class HomeController extends GetxController {
     );
   }
 
-  Future<void> sendPushNotifications() async {
+  Future<void> sendPushNotifications(String token) async {
     try {
       http.Response response = await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
@@ -91,8 +119,7 @@ class HomeController extends GetxController {
               'id': '1',
               'status': 'done'
             },
-            'to':
-                'e2ISZV1hTkiAUmriIzZFA5:APA91bGI09jjDp4UzDvs4u51Gd2VXaZukvA7Su1h0ccwPzaYIaTq31K9EzbeyLYloVF-OukfYxNR0xa8vK2dMn29kyhxEHzpNu43tCALkgKdXxNnidOTBTYz0V9deLc-9pu4HmxO2Ivw',
+            'to': token,
           },
         ),
       );

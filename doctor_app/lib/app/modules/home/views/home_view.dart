@@ -1,6 +1,6 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctor_app/app/modules/video_chat/views/video_chat_view.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
@@ -19,19 +19,34 @@ class HomeView extends GetView<HomeController> {
         elevation: 0.0,
       ),
       body: Center(
-        child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(width: 20),
-            ElevatedButton(
-              onPressed: () {
-                Get.to(
-                  const VideoChatView(),
-                  arguments: [conferenceID, userId],
-                );
-                controller.sendPushNotifications();
-              },
-              child: const Text('Call Patient'),
+            const Text(
+              'Call patient For diaganosis',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 15.0),
+            SizedBox(
+              height: 30,
+              child: ElevatedButton(
+                onPressed: () async {
+                  Get.to(
+                    () => const VideoChatView(),
+                    arguments: [conferenceID, userId],
+                  );
+                  DocumentSnapshot snap = await FirebaseFirestore.instance
+                      .collection('Usertoken')
+                      .doc('Patient')
+                      .get();
+                  String? patientToken = snap['token'];
+                  controller.sendPushNotifications(patientToken!);
+                },
+                child: const Text('Call'),
+              ),
             ),
           ],
         ),

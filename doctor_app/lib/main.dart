@@ -19,7 +19,7 @@ Future<void> main() async {
         importance: NotificationImportance.Max,
         channelShowBadge: true,
         locked: true,
-        defaultRingtoneType: DefaultRingtoneType.Ringtone,
+        defaultRingtoneType: DefaultRingtoneType.Notification,
       ),
     ],
   );

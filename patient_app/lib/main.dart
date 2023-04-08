@@ -1,8 +1,10 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/app/modules/home/controllers/home_controller.dart';
 import 'package:patient_app/firebase_options.dart';
 import 'app/routes/app_pages.dart';
 
@@ -19,6 +21,7 @@ void main() async {
         importance: NotificationImportance.Max,
         channelShowBadge: true,
         locked: true,
+        defaultRingtoneType: DefaultRingtoneType.Ringtone,
       ),
     ],
   );
@@ -32,6 +35,7 @@ void main() async {
       title: "Application",
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
+      theme: ThemeData(primarySwatch: Colors.green),
       debugShowCheckedModeBanner: false,
     ),
   );
@@ -63,23 +67,30 @@ Future<void> backgroundHandler(RemoteMessage message) async {
         key: "ACCEPT",
         label: 'Accept Call',
         color: Colors.green,
-        // autoDismissible: true,
+        autoDismissible: true,
       ),
       NotificationActionButton(
         key: "REJECT",
         label: 'Reject Call',
         color: Colors.red,
-        // autoDismissible: true,
+        autoDismissible: true,
       ),
     ],
   );
   AwesomeNotifications().actionStream.listen(
-    (event) {
+    (event) async {
       print(event);
       if (event.buttonKeyPressed == "REJECT") {
-        print('Call rejected');
+        final homeController = Get.put(HomeController());
+        DocumentSnapshot snap = await FirebaseFirestore.instance
+            .collection('Usertoken')
+            .doc('Doctor')
+            .get();
+        String? doctorToken = snap['token'];
+        homeController.sendPushNotifications(doctorToken!);
       } else if (event.buttonKeyPressed == "ACCEPT") {
-        print('call accepted');
+        final homeController = Get.put(HomeController());
+        homeController.onAcceptCall();
       } else {
         print('Clicked notification');
       }

@@ -3,10 +3,11 @@ version: 1.0.0+1
 publish_to: none
 description: A new Flutter project.
 environment:
-  sdk: '>=2.19.2 <3.0.0'
+  sdk: ">=2.19.2 <3.0.0"
 
 dependencies:
   awesome_notifications: ^0.6.21
+  cloud_firestore: ^4.5.0
   cupertino_icons: ^1.0.2
   firebase_core: ^2.9.0
   firebase_messaging: ^14.2.1

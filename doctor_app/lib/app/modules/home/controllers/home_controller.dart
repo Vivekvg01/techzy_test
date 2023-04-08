@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +11,25 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     listenNotification();
+    getToken();
     super.onInit();
+  }
+
+  String? token = '';
+
+  void getToken() async {
+    token = await FirebaseMessaging.instance.getToken();
+    saveToken(token!);
+  }
+
+  void saveToken(String token) async {
+    await FirebaseFirestore.instance
+        .collection('Usertoken')
+        .doc('Doctor')
+        .set({
+      'token': token,
+    });
+    print(token);
   }
 
   void listenNotification() {
@@ -31,36 +50,12 @@ class HomeController extends GetxController {
             autoDismissible: false,
             backgroundColor: Colors.orange,
           ),
-          // actionButtons: [
-          //   NotificationActionButton(
-          //     key: "ACCEPT",
-          //     label: 'Accept Call',
-          //     color: Colors.green,
-          //     autoDismissible: true,
-          //   ),
-          //   NotificationActionButton(
-          //     key: "REJECT",
-          //     label: 'Reject Call',
-          //     color: Colors.red,
-          //     autoDismissible: true,
-          //   )
-          // ],
         );
-        // AwesomeNotifications().actionStream.listen(
-        //   (event) {
-        //     if (event.buttonKeyPressed == "REJECT") {
-        //       print('call rejected');
-        //     } else if (event.buttonKeyPressed == "ACCEPT") {
-        //       print('call accepted');
-        //     } else {
-        //       print('Clicked notification');
-        //     }
-        //   },
-        // );
       },
     );
   }
-    Future<void> sendPushNotifications() async {
+
+  Future<void> sendPushNotifications(String token) async {
     try {
       http.Response response = await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
@@ -81,7 +76,7 @@ class HomeController extends GetxController {
               'id': '1',
               'status': 'done'
             },
-            'to': 'coGJFSnlR7WNZ-LUzChxcr:APA91bE-X9Y6EZW2JGjOSLMOg9ce6ecQq1MxVUFKRuq-a0tzbvpRvTJJU2jk59sOFw-9iGq4nQVLxsKs5npjVw6kaGZhhTrFYZJZ0vDkx3CdkICBinRcqB2C80m0108vEP-EHYnfO1la',
+            'to': token,
           },
         ),
       );
